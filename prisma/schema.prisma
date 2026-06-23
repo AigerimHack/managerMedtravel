@@ -1,0 +1,135 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  password  String
+  role      String   @default("MANAGER")
+  createdAt DateTime @default(now())
+}
+
+model Patient {
+  id        String   @id @default(cuid())
+  regNum    String?
+  name      String
+  diag      String
+  clinicId  String   @default("")
+  status    String   @default("new")
+  info      String?
+  visits    Visit[]
+  docs      Doc[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Visit {
+  id        String  @id @default(cuid())
+  type      String
+  date      String
+  clinicRef String  @default("")
+  note      String?
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Doc {
+  id        String  @id @default(cuid())
+  name      String
+  date      String
+  data      String
+  fileType  String?
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+}
+
+model Clinic {
+  id        String      @id @default(cuid())
+  name      String
+  city      String?
+  spec      String?
+  coord     String?
+  email     String?
+  phone1    String?
+  phone2    String?
+  phone3    String?
+  addr1     String?
+  addr2     String?
+  notes     String?
+  color     String      @default("#3b82f6")
+  brochures ClinicDoc[]
+}
+
+model ClinicDoc {
+  id       String @id @default(cuid())
+  name     String
+  data     String
+  fileType String?
+  date     String
+  clinicId String
+  clinic   Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+}
+
+model Contact {
+  id    String  @id @default(cuid())
+  type  String
+  name  String
+  phone String?
+  email String?
+  notes String?
+}
+
+model Task {
+  id   String  @id @default(cuid())
+  text String
+  due  String?
+  done Boolean @default(false)
+}
+
+model Invoice {
+  id        String   @id @default(cuid())
+  date      String   @default("")
+  num       String   @default("")
+  clinic    String   @default("")
+  sum       String   @default("")
+  recv      String   @default("")
+  note      String   @default("")
+  file      String?
+  fileName  String?
+  fileType  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NavItem {
+  key     String  @id
+  label   String
+  icon    String
+  visible Boolean @default(true)
+  order   Int
+}
+
+model PriceCard {
+  id        String       @id @default(cuid())
+  diagnosis String
+  notes     String?
+  entries   PriceEntry[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model PriceEntry {
+  id         String    @id @default(cuid())
+  clinicName String
+  treatment  String    @default("")
+  price      String    @default("")
+  cardId     String
+  card       PriceCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+}
