@@ -3,10 +3,15 @@ import { prisma } from '@/lib/prisma'
 import { requireSession } from '@/lib/api-helpers'
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireSession()
+  const { session, error } = await requireSession()
   if (error) return error
 
   const { id } = await params
+  const existing = await prisma.task.findUnique({ where: { id } })
+  if (!existing || existing.userId !== session.user.id) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   const body = await req.json()
   const task = await prisma.task.update({
     where: { id },
@@ -20,10 +25,15 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { error } = await requireSession()
+  const { session, error } = await requireSession()
   if (error) return error
 
   const { id } = await params
+  const existing = await prisma.task.findUnique({ where: { id } })
+  if (!existing || existing.userId !== session.user.id) {
+    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  }
+
   await prisma.task.delete({ where: { id } })
   return NextResponse.json({ ok: true })
 }

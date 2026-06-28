@@ -20,7 +20,7 @@ export default function LoginPage() {
       router.push('/')
       router.refresh()
     } else {
-      setError('Неверный email или пароль')
+      setError('Неверный логин или пароль')
     }
   }
 
@@ -35,12 +35,12 @@ export default function LoginPage() {
         <form onSubmit={submit}>
           <div style={{ marginBottom: 16 }}>
             <label style={{ display: 'block', fontSize: 11.5, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>
-              Email
+              Логин
             </label>
             <input
-              type="email" value={email} onChange={e => setEmail(e.target.value)}
+              type="text" value={email} onChange={e => setEmail(e.target.value)}
               required autoFocus
-              placeholder="admin@medtravel.com"
+              placeholder="Логин"
               style={{ width: '100%', padding: '10px 14px', border: '1.5px solid #e2e8f0', borderRadius: 10, fontSize: 14, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
             />
           </div>
@@ -72,12 +72,6 @@ export default function LoginPage() {
             {loading ? 'Вход...' : 'Войти'}
           </button>
         </form>
-
-        <div style={{ marginTop: 24, padding: '14px 16px', background: '#f8fafc', borderRadius: 10, fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6 }}>
-          <strong style={{ color: '#64748b' }}>По умолчанию:</strong><br />
-          Email: admin@medtravel.com<br />
-          Пароль: admin123
-        </div>
       </div>
     </div>
   )

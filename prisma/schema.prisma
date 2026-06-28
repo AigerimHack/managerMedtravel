@@ -14,6 +14,7 @@ model User {
   password  String
   role      String   @default("MANAGER")
   createdAt DateTime @default(now())
+  tasks     Task[]
 }
 
 model Patient {
@@ -87,10 +88,12 @@ model Contact {
 }
 
 model Task {
-  id   String  @id @default(cuid())
-  text String
-  due  String?
-  done Boolean @default(false)
+  id     String  @id @default(cuid())
+  text   String
+  due    String?
+  done   Boolean @default(false)
+  userId String
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Invoice {

@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 import { requireSession } from '@/lib/api-helpers'
 
 export async function POST(req: NextRequest) {
-  const { error } = await requireSession()
+  const { session, error } = await requireSession()
   if (error) return error
 
   const data = await req.json()
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
     await prisma.task.upsert({
       where: { id: t.id },
       update: {},
-      create: { id: t.id, text: t.text ?? '', due: t.due || null, done: t.done ?? false },
+      create: { id: t.id, text: t.text ?? '', due: t.due || null, done: t.done ?? false, userId: session.user.id },
     })
   }
 
