@@ -49,7 +49,17 @@
       "Bash(sqlite3 prisma/dev.db \"SELECT id, email FROM User;\")",
       "Bash(pkill -f \"next dev\")",
       "Bash(ls -la .vercel)",
-      "Bash(cat vercel.json)"
+      "Bash(cat vercel.json)",
+      "Bash(git stash *)",
+      "Bash(git checkout *)",
+      "Bash(grep -n \"flights\\\\|Flight\\\\|period\\\\|group\\\\|dollars\\\\|\\\\$\" components/sections/InvoicesSection.tsx)",
+      "Bash(npx eslint *)",
+      "Bash(grep -v \"^$\")",
+      "Bash(cat .eslintrc.json)",
+      "Bash(cat .eslintrc.js)",
+      "Bash(cat eslint.config.js)",
+      "Bash(cat eslint.config.mjs)",
+      "Bash(kill 75306)"
     ]
   }
 }

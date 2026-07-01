@@ -11,6 +11,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const invoice = await prisma.invoice.update({
     where: { id },
     data: {
+      ...(body.period !== undefined && { period: body.period }),
       ...(body.date !== undefined && { date: body.date }),
       ...(body.num !== undefined && { num: body.num }),
       ...(body.clinic !== undefined && { clinic: body.clinic }),

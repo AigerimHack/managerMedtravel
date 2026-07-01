@@ -5,12 +5,16 @@ export type Status = 'new' | 'processing' | 'docs' | 'clinic' | 'waiting' | 'enr
 export interface Visit {
   id: string; type: string; date: string; clinic: string; note?: string
 }
+export interface Flight {
+  id: string; label: string; date: string
+}
 export interface Doc {
   id: string; name: string; date: string; data: string; fileType?: string
 }
 export interface Patient {
   id: string; name: string; regNum?: string; diag: string; clinic: string
   status: Status; info?: string; visits: Visit[]; docs: Doc[]
+  flights?: Flight[]
   created: string; updated: string
 }
 export interface ClinicDoc {
@@ -31,7 +35,7 @@ export interface Task {
   id: string; text: string; due?: string; done: boolean
 }
 export interface Invoice {
-  id: string; date: string; num: string; clinic: string
+  id: string; period: string; date: string; num: string; clinic: string
   sum: string; recv: string; note: string
   file?: string; fileName?: string; fileType?: string; updated?: string
 }
@@ -234,7 +238,7 @@ export const useStore = create<Store>()((set, get) => ({
 
   // ── Invoices ──────────────────────────────────────────────
   addInvoice: () => {
-    const tmp: Invoice = { id: uid(), date: '', num: '', clinic: '', sum: '', recv: '', note: '' }
+    const tmp: Invoice = { id: uid(), period: '', date: '', num: '', clinic: '', sum: '', recv: '', note: '' }
     set(s => ({ invoices: [...s.invoices, tmp] }))
     api('/api/invoices', { method: 'POST' })
       .then(created => set(s => ({ invoices: s.invoices.map(x => x.id === tmp.id ? created : x) })))
@@ -296,7 +300,6 @@ export function localDateStr(date = new Date()) {
 }
 
 export const MONTHS = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь']
-export const VISIT_TYPES = ['Консультация','МРТ/КТ','Анализы','Операция','Контроль','Другое']
 export const AVATAR_COLORS = ['#2dd4bf','#6366f1','#f59e0b','#ef4444','#8b5cf6','#10b981','#f97316']
 
 export function avatarColor(name: string) {

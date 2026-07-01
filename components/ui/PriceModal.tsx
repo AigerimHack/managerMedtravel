@@ -5,7 +5,7 @@ import { Modal } from './Modal'
 import { Button } from './Button'
 import { Input, Textarea } from './Input'
 import { SectionLabel } from './Card'
-import { useStore, PriceEntry, PriceCard } from '@/lib/store'
+import { useStore, PriceEntry } from '@/lib/store'
 import { useToast } from './Toast'
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2) }
@@ -30,6 +30,7 @@ export function PriceModal({ open, onClose, editId }: Props) {
   useEffect(() => {
     if (!open) return
     if (editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDiagnosis(editing.diagnosis)
       setNotes(editing.notes ?? '')
       setEntries(editing.entries.length > 0
@@ -38,6 +39,7 @@ export function PriceModal({ open, onClose, editId }: Props) {
     } else {
       setDiagnosis(''); setNotes(''); setEntries([EMPTY_ENTRY()])
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editId])
 
   const updateEntry = (id: string, field: keyof PriceEntry, val: string) =>

@@ -82,15 +82,15 @@ export function ClinicsSection() {
               Нет клиник. Добавьте первую →
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
             {clinics.map(c => (
-              <Card key={c.id} hoverable padding={24} onClick={() => openClinic(c.id)}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
+              <Card key={c.id} hoverable padding={18} onClick={() => openClinic(c.id)}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, flex: 1, minWidth: 0 }}>
                     <div style={{ width: 12, height: 12, borderRadius: '50%', background: c.color, flexShrink: 0, marginTop: 4 }} />
                     <div style={{ minWidth: 0 }}>
-                      <h3 style={{ fontSize: 15, fontWeight: 700, color: '#1a2332', marginBottom: 6, lineHeight: 1.3 }}>{c.name}</h3>
-                      {c.spec && <span style={{ display: 'inline-block', fontSize: 11.5, fontWeight: 600, color: '#64748b', background: '#f1f5f9', padding: '2px 8px', borderRadius: 6 }}>{c.spec}</span>}
+                      <h3 style={{ fontSize: 13.5, fontWeight: 700, color: '#1a2332', marginBottom: 4, lineHeight: 1.3 }}>{c.name}</h3>
+                      {c.spec && <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, color: '#64748b', background: '#f1f5f9', padding: '2px 7px', borderRadius: 6 }}>{c.spec}</span>}
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 12 }} onClick={e => e.stopPropagation()}>
@@ -101,20 +101,20 @@ export function ClinicsSection() {
                     </button>
                   </div>
                 </div>
-                <div style={{ borderTop: '1px solid #f8fafc', paddingTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {c.city && <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><MapPin size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 13.5, color: '#475569' }}>{c.city}</span></div>}
-                  {c.coord && <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><User size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 13.5, color: '#475569' }}>{c.coord}</span></div>}
-                  {c.email && <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Mail size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><a href={`mailto:${c.email}`} style={{ fontSize: 13.5, color: '#2dd4bf', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>{c.email}</a></div>}
+                <div style={{ borderTop: '1px solid #f8fafc', paddingTop: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {c.city && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 12.5, color: '#475569' }}>{c.city}</span></div>}
+                  {c.coord && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><User size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 12.5, color: '#475569' }}>{c.coord}</span></div>}
+                  {c.email && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><a href={`mailto:${c.email}`} style={{ fontSize: 12.5, color: '#2dd4bf', textDecoration: 'none' }} onClick={e => e.stopPropagation()}>{c.email}</a></div>}
                   {[c.phone1, c.phone2, c.phone3].filter(Boolean).map((ph, i) => (
-                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}><Phone size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 13.5, color: '#475569' }}>{ph}</span></div>
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}><Phone size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 12.5, color: '#475569' }}>{ph}</span></div>
                   ))}
-                  {c.addr1 && <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><MapPin size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 13.5, color: '#475569' }}>{c.addr1}</span></div>}
-                  {c.addr2 && <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}><MapPin size={14} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 13.5, color: '#94a3b8' }}>{c.addr2}</span></div>}
+                  {c.addr1 && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 12.5, color: '#475569' }}>{c.addr1}</span></div>}
+                  {c.addr2 && <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><MapPin size={12} style={{ color: '#cbd5e1', flexShrink: 0 }} /><span style={{ fontSize: 12.5, color: '#94a3b8' }}>{c.addr2}</span></div>}
                 </div>
                 {c.notes && (
-                  <div style={{ marginTop: 14, padding: '12px 14px', background: '#f8fafc', borderRadius: 10, display: 'flex', gap: 10 }}>
-                    <FileText size={13} style={{ color: '#cbd5e1', flexShrink: 0, marginTop: 1 }} />
-                    <p style={{ fontSize: 12.5, color: '#64748b', lineHeight: 1.5, margin: 0 }}>{c.notes}</p>
+                  <div style={{ marginTop: 10, padding: '8px 10px', background: '#f8fafc', borderRadius: 8, display: 'flex', gap: 8 }}>
+                    <FileText size={12} style={{ color: '#cbd5e1', flexShrink: 0, marginTop: 1 }} />
+                    <p style={{ fontSize: 12, color: '#64748b', lineHeight: 1.5, margin: 0 }}>{c.notes}</p>
                   </div>
                 )}
               </Card>

@@ -26,8 +26,8 @@ export function PatientsSection() {
   })
 
   const years = Object.keys(byYear).map(Number).sort((a, b) => b - a)
-  const toggleYear = (y: number) => setOpenYears(s => { const n = new Set(s); n.has(y) ? n.delete(y) : n.add(y); return n })
-  const toggleMonth = (k: string) => setOpenMonths(s => { const n = new Set(s); n.has(k) ? n.delete(k) : n.add(k); return n })
+  const toggleYear = (y: number) => setOpenYears(s => { const n = new Set(s); if (n.has(y)) n.delete(y); else n.add(y); return n })
+  const toggleMonth = (k: string) => setOpenMonths(s => { const n = new Set(s); if (n.has(k)) n.delete(k); else n.add(k); return n })
 
   return (
     <div>

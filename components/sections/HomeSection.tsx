@@ -28,11 +28,15 @@ export function HomeSection() {
   const scheduleVisits = useMemo(() => {
     const res: { name: string; type: string; time: string; clinicName: string; color: string }[] = []
     patients.forEach(p => {
-      (p.visits ?? []).forEach(v => {
+      ;(p.visits ?? []).forEach(v => {
         if (v.date?.slice(0, 10) === showDate) {
           const cl = clinics.find(c => c.id === (v.clinic || p.clinic))
           res.push({ name: p.name, type: v.type || 'Визит', time: new Date(v.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), clinicName: cl?.name ?? '—', color: cl?.color ?? '#3b82f6' })
         }
+      })
+      ;(p.flights ?? []).forEach(fl => {
+        if (fl.date && fl.date.slice(0, 10) === showDate)
+          res.push({ name: p.name, type: fl.label || 'Перелёт', time: new Date(fl.date).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), clinicName: '', color: '#f59e0b' })
       })
     })
     return res.sort((a, b) => a.time.localeCompare(b.time))
@@ -43,6 +47,7 @@ export function HomeSection() {
     [patients, todayStr])
 
   const recentRequests = useMemo(() => {
+    // eslint-disable-next-line react-hooks/purity
     const weekAgo = localDateStr(new Date(Date.now() - 7 * 86400000))
     return patients
       .filter(p => p.status !== 'done' && (p.updated || p.created).slice(0, 10) >= weekAgo)
@@ -52,13 +57,18 @@ export function HomeSection() {
   const year = calDate.getFullYear(), mon = calDate.getMonth()
   const { dow, days } = miniCalDays(year, mon)
 
-  const eventDays = useMemo(() => {
+  const eventDays = (() => {
     const s = new Set<number>()
-    patients.forEach(p => (p.visits ?? []).forEach(v => {
-      if (v.date) { const d = new Date(v.date); if (d.getFullYear() === year && d.getMonth() === mon) s.add(d.getDate()) }
-    }))
+    patients.forEach(p => {
+      ;(p.visits ?? []).forEach(v => {
+        if (v.date) { const d = new Date(v.date); if (d.getFullYear() === year && d.getMonth() === mon) s.add(d.getDate()) }
+      })
+      ;(p.flights ?? []).forEach(fl => {
+        if (fl.date) { const d = new Date(fl.date); if (d.getFullYear() === year && d.getMonth() === mon) s.add(d.getDate()) }
+      })
+    })
     return s
-  }, [patients, year, mon])
+  })()
 
   const todayTasks = tasks.filter(t => !t.done && (!t.due || t.due >= todayStr)).slice(0, 4)
   const pad = (n: number) => String(n).padStart(2, '0')

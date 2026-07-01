@@ -11,7 +11,7 @@ export function VisitNotifications() {
   const upcoming = useMemo(() => {
     const now = new Date()
     const in24 = new Date(now.getTime() + 24 * 60 * 60 * 1000)
-    const results: { patientId: string; patientName: string; type: string; date: Date; clinicName: string }[] = []
+    const results: { patientId: string; patientName: string; type: string; date: Date; clinicName: string; isFlight?: boolean }[] = []
     patients.forEach(p => {
       ;(p.visits ?? []).forEach(v => {
         if (!v.date) return
@@ -19,6 +19,13 @@ export function VisitNotifications() {
         if (d >= now && d <= in24) {
           const cl = clinics.find(c => c.id === (v.clinic || p.clinic))
           results.push({ patientId: p.id, patientName: p.name, type: v.type || 'Визит', date: d, clinicName: cl?.name ?? '' })
+        }
+      })
+      ;(p.flights ?? []).forEach(fl => {
+        if (!fl.date) return
+        const d = new Date(fl.date)
+        if (d >= now && d <= in24) {
+          results.push({ patientId: p.id, patientName: p.name, type: fl.label || 'Перелёт', date: d, clinicName: '', isFlight: true })
         }
       })
     })
@@ -72,7 +79,7 @@ export function VisitNotifications() {
           zIndex: 50, overflow: 'hidden',
         }}>
           <div style={{ padding: '13px 16px 10px', borderBottom: '1px solid #f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: '#1a2332' }}>Визиты в ближайшие 24 ч</span>
+            <span style={{ fontSize: 13, fontWeight: 600, color: '#1a2332' }}>События в ближайшие 24 ч</span>
             {upcoming.length > 0 && (
               <span style={{ fontSize: 10.5, fontWeight: 700, background: '#fef2f2', color: '#ef4444', padding: '1px 7px', borderRadius: 10 }}>
                 {upcoming.length}
@@ -82,7 +89,7 @@ export function VisitNotifications() {
 
           {upcoming.length === 0 ? (
             <div style={{ padding: '28px 16px', textAlign: 'center', color: '#cbd5e1', fontSize: 13 }}>
-              Нет предстоящих визитов
+              Нет предстоящих событий
             </div>
           ) : (
             <div style={{ maxHeight: 380, overflowY: 'auto' }}>
@@ -97,7 +104,7 @@ export function VisitNotifications() {
                       {v.date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
-                  <span style={{ fontSize: 12, color: '#64748b' }}>
+                  <span style={{ fontSize: 12, color: v.isFlight ? '#f59e0b' : '#64748b' }}>
                     {v.type}{v.clinicName ? ` · ${v.clinicName}` : ''}
                   </span>
                 </div>

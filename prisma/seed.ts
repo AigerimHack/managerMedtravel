@@ -14,19 +14,6 @@ async function main() {
     console.log('Created admin: admin@medtravel.com / admin123')
   }
 
-  // Default clinics
-  const clinicCount = await prisma.clinic.count()
-  if (clinicCount === 0) {
-    await prisma.clinic.createMany({
-      data: [
-        { name: 'Asan Medical Center', city: 'Сеул, Корея', spec: 'Многопрофильная', phone1: '+82 2 3010 3114', color: '#3b82f6' },
-        { name: 'Severance Hospital', city: 'Сеул, Корея', spec: 'Онкология, кардиология', phone1: '+82 2 2228 5000', color: '#10b981' },
-        { name: 'Samsung Medical Center', city: 'Сеул, Корея', spec: 'Эндокринология', phone1: '+82 2 3410 2114', color: '#8b5cf6' },
-        { name: 'Seoul National University Hospital', city: 'Сеул, Корея', spec: 'Нейрохирургия', phone1: '+82 2 2072 2114', color: '#f97316' },
-      ],
-    })
-  }
-
   // Nav items
   const navDefs = [
     { key: 'home',     label: 'Главная',    icon: 'Home',         visible: true, order: 0 },

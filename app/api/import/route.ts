@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireSession } from '@/lib/api-helpers'
 
+interface VisitInput { id: string; type?: string; date?: string; clinic?: string; note?: string }
+interface DocInput { id: string; name?: string; date?: string; data?: string; fileType?: string }
+interface BrochureInput { id: string; name?: string; data?: string; fileType?: string; date?: string }
+
 export async function POST(req: NextRequest) {
   const { session, error } = await requireSession()
   if (error) return error
@@ -24,13 +28,13 @@ export async function POST(req: NextRequest) {
         createdAt: p.created ? new Date(p.created) : new Date(),
         updatedAt: p.updated ? new Date(p.updated) : new Date(),
         visits: {
-          create: (p.visits ?? []).map((v: any) => ({
+          create: (p.visits ?? []).map((v: VisitInput) => ({
             id: v.id, type: v.type ?? '', date: v.date ?? '',
             clinicRef: v.clinic ?? '', note: v.note || null,
           })),
         },
         docs: {
-          create: (p.docs ?? []).map((d: any) => ({
+          create: (p.docs ?? []).map((d: DocInput) => ({
             id: d.id, name: d.name ?? '', date: d.date ?? '',
             data: d.data ?? '', fileType: d.fileType || null,
           })),
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
         addr1: c.addr1 || null, addr2: c.addr2 || null,
         notes: c.notes || null, color: c.color ?? '#3b82f6',
         brochures: {
-          create: (c.brochures ?? []).map((b: any) => ({
+          create: (c.brochures ?? []).map((b: BrochureInput) => ({
             id: b.id, name: b.name ?? '', data: b.data ?? '',
             fileType: b.fileType || null, date: b.date ?? '',
           })),
@@ -77,7 +81,7 @@ export async function POST(req: NextRequest) {
     await prisma.task.upsert({
       where: { id: t.id },
       update: {},
-      create: { id: t.id, text: t.text ?? '', due: t.due || null, done: t.done ?? false, userId: session.user.id },
+      create: { id: t.id, text: t.text ?? '', due: t.due || null, done: t.done ?? false, userId: session!.user.id! },
     })
   }
 

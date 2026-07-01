@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       text: body.text ?? '',
       due: body.due || null,
       done: body.done ?? false,
-      userId: session.user.id,
+      userId: session!.user.id!,
     },
   })
   return NextResponse.json(task, { status: 201 })

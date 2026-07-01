@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { requireSession, clinicToApi } from '@/lib/api-helpers'
 
+interface BrochureInput { id: string; name?: string; data?: string; fileType?: string; date?: string }
+
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { error } = await requireSession()
   if (error) return error
@@ -14,7 +16,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     await prisma.clinicDoc.deleteMany({ where: { clinicId: id } })
     if (body.brochures.length > 0) {
       await prisma.clinicDoc.createMany({
-        data: body.brochures.map((b: any) => ({
+        data: body.brochures.map((b: BrochureInput) => ({
           id: b.id, name: b.name, data: b.data ?? '', fileType: b.fileType || null,
           date: b.date ?? '', clinicId: id,
         })),

@@ -1,13 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
+import type { PriceCard, PriceEntry } from '@prisma/client'
 import { prisma } from '@/lib/prisma'
 import { requireSession } from '@/lib/api-helpers'
 
-function toApi(card: any) {
+interface EntryInput { id: string; clinicName?: string; treatment?: string; price?: string }
+
+function toApi(card: PriceCard & { entries: PriceEntry[] }) {
   return {
     id: card.id,
     diagnosis: card.diagnosis,
     notes: card.notes ?? undefined,
-    entries: (card.entries ?? []).map((e: any) => ({
+    entries: card.entries.map((e: PriceEntry) => ({
       id: e.id, clinicName: e.clinicName, treatment: e.treatment, price: e.price,
     })),
     created: card.createdAt instanceof Date ? card.createdAt.toISOString() : card.createdAt,
@@ -36,7 +39,7 @@ export async function POST(req: NextRequest) {
       diagnosis: body.diagnosis ?? '',
       notes: body.notes || null,
       entries: {
-        create: (body.entries ?? []).map((e: any) => ({
+        create: (body.entries ?? []).map((e: EntryInput) => ({
           id: e.id,
           clinicName: e.clinicName ?? '',
           treatment: e.treatment ?? '',

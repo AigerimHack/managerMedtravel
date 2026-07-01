@@ -1,11 +1,11 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
-import { Plus, Trash2, Upload, FileText, Download, X } from 'lucide-react'
+import { Plus, Trash2, Upload, FileText, Download, X, Plane } from 'lucide-react'
 import { Modal } from './Modal'
 import { Button } from './Button'
 import { Input, Select, Textarea } from './Input'
 import { SectionLabel } from './Card'
-import { useStore, Patient, STATUSES, VISIT_TYPES, Doc, Visit, Status } from '@/lib/store'
+import { useStore, STATUSES, Doc, Visit, Flight, Status } from '@/lib/store'
 import { useToast } from './Toast'
 
 interface Props { open: boolean; onClose: () => void; editId?: string | null; defaultStatus?: Status }
@@ -22,20 +22,35 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
   const [info, setInfo] = useState('')
   const [visits, setVisits] = useState<Visit[]>([])
   const [docs, setDocs] = useState<Doc[]>([])
+  const [flights, setFlights] = useState<Flight[]>([
+    { id: uid(), label: 'Вылет', date: '' },
+    { id: uid(), label: 'Прилет', date: '' },
+  ])
   const fileRef = useRef<HTMLInputElement>(null)
   const editing = editId ? patients.find(p => p.id === editId) : null
 
   useEffect(() => {
     if (!open) return
     if (editing) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setName(editing.name); setRegNum(editing.regNum ?? ''); setDiag(editing.diag)
       setClinic(editing.clinic); setStatus(editing.status); setInfo(editing.info ?? '')
       setVisits(JSON.parse(JSON.stringify(editing.visits)))
       setDocs(JSON.parse(JSON.stringify(editing.docs)))
+      const ef = editing.flights ?? []
+      setFlights([
+        { id: ef[0]?.id ?? uid(), label: ef[0]?.label ?? 'Вылет', date: ef[0]?.date ?? '' },
+        { id: ef[1]?.id ?? uid(), label: ef[1]?.label ?? 'Прилет', date: ef[1]?.date ?? '' },
+      ])
     } else {
       setName(''); setRegNum(''); setDiag(''); setClinic('')
       setStatus(defaultStatus); setInfo(''); setVisits([]); setDocs([])
+      setFlights([
+        { id: uid(), label: 'Вылет', date: '' },
+        { id: uid(), label: 'Прилет', date: '' },
+      ])
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editId])
 
   const addVisit = () => setVisits(v => [...v, { id: uid(), type: 'Консультация', date: '', clinic: '', note: '' }])
@@ -54,7 +69,7 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
 
   const save = () => {
     if (!name.trim()) { toast('Введите ФИО'); return }
-    const data = { name: name.trim(), regNum, diag, clinic, status, info, visits, docs }
+    const data = { name: name.trim(), regNum, diag, clinic, status, info, visits, docs, flights }
     if (editing) { updatePatient(editing.id, data); toast('Изменения сохранены') }
     else { addPatient(data); toast('Пациент добавлен') }
     onClose()
@@ -95,11 +110,14 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 8 }}>
         {visits.map(v => (
           <div key={v.id} style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: 12, background: '#f8fafc', borderRadius: 10, border: '1.5px solid #f1f5f9', alignItems: 'center' }}>
-            <select value={v.type} onChange={e => updateVisit(v.id, 'type', e.target.value)}
-              style={{ padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 12.5, background: '#fff', fontFamily: 'inherit', outline: 'none' }}>
-              {VISIT_TYPES.map(t => <option key={t}>{t}</option>)}
-            </select>
-            <input type="datetime-local" value={v.date} onChange={e => updateVisit(v.id, 'date', e.target.value)}
+            <input
+              type="text"
+              value={v.type}
+              onChange={e => updateVisit(v.id, 'type', e.target.value)}
+              placeholder="Приём гинеколога, МРТ, анализы..."
+              style={{ flex: 1, padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 12.5, fontFamily: 'inherit', outline: 'none' }}
+            />
+            <input type="datetime-local" value={v.date} min="2000-01-01T00:00" max="2099-12-31T23:59" onChange={e => updateVisit(v.id, 'date', e.target.value)}
               style={{ padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 12.5, fontFamily: 'inherit', outline: 'none' }} />
             <select value={v.clinic} onChange={e => updateVisit(v.id, 'clinic', e.target.value)}
               style={{ flex: 1, minWidth: 140, padding: '6px 10px', border: '1.5px solid #e2e8f0', borderRadius: 8, fontSize: 12.5, background: '#fff', fontFamily: 'inherit', outline: 'none' }}>
@@ -115,6 +133,33 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
       <button onClick={addVisit} style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%', padding: '9px 14px', border: '1.5px dashed #e2e8f0', borderRadius: 10, background: 'none', cursor: 'pointer', fontSize: 13, color: '#94a3b8', fontFamily: 'inherit', marginBottom: 20 }}>
         <Plus size={14} /> Добавить визит
       </button>
+
+      {/* Flights */}
+      <SectionLabel>Перелёты</SectionLabel>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+        {flights.map((fl, i) => (
+          <div key={fl.id} style={{ display: 'flex', gap: 8, padding: 12, background: '#fffbeb', borderRadius: 10, border: '1.5px solid #fde68a', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 28, height: 28, borderRadius: 8, background: '#fef3c7', flexShrink: 0 }}>
+              <Plane size={13} style={{ color: '#f59e0b', transform: i === 0 ? 'rotate(45deg)' : 'rotate(-45deg)' }} />
+            </div>
+            <input
+              type="text"
+              value={fl.label}
+              onChange={e => setFlights(fs => fs.map(f => f.id === fl.id ? { ...f, label: e.target.value } : f))}
+              placeholder="Вылет / Прилет..."
+              style={{ flex: 1, padding: '6px 10px', border: '1.5px solid #fde68a', borderRadius: 8, fontSize: 12.5, fontFamily: 'inherit', outline: 'none', background: '#fff' }}
+            />
+            <input
+              type="datetime-local"
+              value={fl.date}
+              min="2000-01-01T00:00"
+              max="2099-12-31T23:59"
+              onChange={e => setFlights(fs => fs.map(f => f.id === fl.id ? { ...f, date: e.target.value } : f))}
+              style={{ padding: '6px 10px', border: '1.5px solid #fde68a', borderRadius: 8, fontSize: 12.5, fontFamily: 'inherit', outline: 'none', background: '#fff' }}
+            />
+          </div>
+        ))}
+      </div>
 
       {/* Docs */}
       <div style={{ marginTop: 24 }}>

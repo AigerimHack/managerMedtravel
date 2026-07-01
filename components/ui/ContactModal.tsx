@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Modal } from './Modal'
 import { Button } from './Button'
 import { Input, Textarea } from './Input'
-import { useStore, Contact, ContactType } from '@/lib/store'
+import { useStore, ContactType } from '@/lib/store'
 import { useToast } from './Toast'
 
 const TITLES: Record<ContactType, string> = {

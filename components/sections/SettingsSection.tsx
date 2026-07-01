@@ -13,7 +13,7 @@ export function SettingsSection() {
   const { clinics, deleteClinic, addClinic, navItems, updateNavItem } = useStore()
   const { data: session } = useSession()
   const { toast } = useToast()
-  const user = session?.user as any
+  const user = session?.user
   const [editId, setEditId] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
   const [newName, setNewName] = useState('')

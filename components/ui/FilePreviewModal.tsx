@@ -10,7 +10,7 @@ interface Props {
   fileType?: string
 }
 
-export function FilePreviewModal({ open, onClose, fileName, fileData, fileType }: Props) {
+export function FilePreviewModal({ open, onClose, fileName, fileData }: Props) {
   const isPdf = fileData?.startsWith('data:application/pdf') || fileName?.toLowerCase().endsWith('.pdf')
   const isImg = fileData?.match(/^data:image\//)
 
@@ -29,7 +29,10 @@ export function FilePreviewModal({ open, onClose, fileName, fileData, fileType }
         {isPdf && fileData ? (
           <iframe src={fileData} className="w-full h-[600px] border-none" />
         ) : isImg && fileData ? (
-          <img src={fileData} alt={fileName} className="max-w-full max-h-[600px] object-contain p-4" />
+          <span style={{ display: 'contents' }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={fileData} alt={fileName} className="max-w-full max-h-[600px] object-contain p-4" />
+          </span>
         ) : (
           <div className="text-center text-gray-400 py-12">
             <div className="text-5xl mb-3">📄</div>

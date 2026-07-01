@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Plus, Search, LogOut } from 'lucide-react'
+import { Plus, LogOut } from 'lucide-react'
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import { ToastProvider } from '@/components/ui/Toast'
 import { Sidebar } from '@/components/ui/Sidebar'
@@ -12,17 +12,15 @@ const SIDEBAR_W = 220
 
 function ShellInner({ children }: { children: React.ReactNode }) {
   const [addOpen, setAddOpen] = useState(false)
-  const { patients, initialize, initialized } = useStore()
+  const { initialize, initialized } = useStore()
   const { data: session } = useSession()
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { initialize() }, [])
-
-  const greenCount = patients.filter(p => p.status === 'enrolled').length
-  const reqCount = patients.filter(p => p.status !== 'enrolled' && p.status !== 'done').length
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f4f6f9' }}>
-      <Sidebar greenCount={greenCount} reqCount={reqCount} user={session?.user as any} />
+      <Sidebar user={session?.user ?? undefined} />
       <PatientModal open={addOpen} onClose={() => setAddOpen(false)} />
 
       <div style={{ marginLeft: SIDEBAR_W, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: 0 }}>
@@ -31,17 +29,6 @@ function ShellInner({ children }: { children: React.ReactNode }) {
           borderBottom: '1px solid #f1f5f9', padding: '0 28px', height: 60,
           display: 'flex', alignItems: 'center', gap: 16,
         }}>
-          <div style={{ position: 'relative', flex: 1, maxWidth: 440 }}>
-            <Search size={15} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: '#cbd5e1' }} />
-            <input
-              placeholder="Поиск по пациентам, клиникам, диагнозам..."
-              style={{
-                width: '100%', paddingLeft: 36, paddingRight: 16, paddingTop: 8, paddingBottom: 8,
-                fontSize: 13.5, border: '1px solid #e2e8f0', borderRadius: 10, outline: 'none',
-                background: '#f8fafc', color: '#1a2332', fontFamily: 'inherit',
-              }}
-            />
-          </div>
           <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
             <VisitNotifications />
             <button

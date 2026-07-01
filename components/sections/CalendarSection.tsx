@@ -27,6 +27,14 @@ export function CalendarSection() {
         const cl = clinics.find(c => c.id === (v.clinic || p.clinic))
         if (!m[day]) m[day] = []
         m[day].push({ name: p.name, type: v.type || 'Визит', time: d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), color: cl?.color ?? '#3b82f6', patientId: p.id })
+      });
+      (p.flights ?? []).forEach(fl => {
+        if (!fl.date) return
+        const d = new Date(fl.date)
+        if (d.getFullYear() !== year || d.getMonth() !== mon) return
+        const day = d.getDate()
+        if (!m[day]) m[day] = []
+        m[day].push({ name: p.name, type: fl.label || 'Перелёт', time: d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }), color: '#f59e0b', patientId: p.id })
       })
     })
     return m

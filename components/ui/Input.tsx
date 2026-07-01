@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, forwardRef } from 'react'
+import { CSSProperties, ReactNode } from 'react'
 
 interface BaseProps {
   label?: string

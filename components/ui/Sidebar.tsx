@@ -21,15 +21,14 @@ const KEY_TO_PATH: Record<string, string> = {
   settings: '/settings',
 }
 
-interface Props { greenCount: number; reqCount: number; user?: { name?: string; email?: string; role?: string } }
+interface Props { greenCount?: number; reqCount?: number; user?: { name?: string | null; email?: string | null; role?: string } }
 
-export function Sidebar({ greenCount, reqCount, user }: Props) {
+export function Sidebar({ user }: Props) {
   const { navItems } = useStore()
   const pathname = usePathname()
-  const badges: Partial<Record<string, number>> = { greens: greenCount, requests: reqCount }
   const visible = [...navItems].filter(n => n.visible).sort((a, b) => a.order - b.order)
   const displayName = user?.name ?? 'Пользователь'
-  const displayRole = (user as any)?.role === 'ADMIN' ? 'Администратор' : 'Менеджер'
+  const displayRole = user?.role === 'ADMIN' ? 'Администратор' : 'Менеджер'
   const ava = displayName.trim().split(' ').map((p: string) => p[0] ?? '').slice(0, 2).join('').toUpperCase()
 
   return (
@@ -57,7 +56,6 @@ export function Sidebar({ greenCount, reqCount, user }: Props) {
               {isActive && <span style={{ position: 'absolute', left: 0, top: 0, bottom: 0, width: 3, background: '#2dd4bf', borderRadius: '0 2px 2px 0' }} />}
               <Icon size={17} />
               <span style={{ flex: 1 }}>{label}</span>
-              {badges[key] ? <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 7px', borderRadius: 20, background: '#2dd4bf', color: '#0f1923' }}>{badges[key]}</span> : null}
             </Link>
           )
         })}

@@ -27,8 +27,17 @@ model Patient {
   info      String?
   visits    Visit[]
   docs      Doc[]
+  flights   Flight[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Flight {
+  id        String  @id @default(cuid())
+  label     String  @default("")
+  date      String  @default("")
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
 }
 
 model Visit {
@@ -98,6 +107,7 @@ model Task {
 
 model Invoice {
   id        String   @id @default(cuid())
+  period    String   @default("")
   date      String   @default("")
   num       String   @default("")
   clinic    String   @default("")
