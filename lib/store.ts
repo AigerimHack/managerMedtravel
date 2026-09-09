@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export type Status = 'new' | 'processing' | 'docs' | 'clinic' | 'waiting' | 'enrolled' | 'done'
+export type Status = 'new' | 'processing' | 'docs' | 'clinic' | 'waiting' | 'enrolled' | 'done' | 'declined'
 
 export interface Visit {
   id: string; type: string; date: string; clinic: string; note?: string
@@ -239,7 +239,7 @@ export const useStore = create<Store>()((set, get) => ({
   // ── Invoices ──────────────────────────────────────────────
   addInvoice: () => {
     const tmp: Invoice = { id: uid(), period: '', date: '', num: '', clinic: '', sum: '', recv: '', note: '' }
-    set(s => ({ invoices: [...s.invoices, tmp] }))
+    set(s => ({ invoices: [tmp, ...s.invoices] }))
     api('/api/invoices', { method: 'POST' })
       .then(created => set(s => ({ invoices: s.invoices.map(x => x.id === tmp.id ? created : x) })))
       .catch(() => set(s => ({ invoices: s.invoices.filter(x => x.id !== tmp.id) })))
@@ -291,6 +291,7 @@ export const STATUSES: { key: Status; label: string; color: string; bg: string }
   { key: 'waiting',    label: 'Ожидание ответа',     color: '#991b1b', bg: '#fef2f2' },
   { key: 'enrolled',   label: 'Записан',             color: '#065f46', bg: '#ecfdf5' },
   { key: 'done',       label: 'Завершён',            color: '#475569', bg: '#f1f5f9' },
+  { key: 'declined',   label: 'Отказ',               color: '#be123c', bg: '#fff1f2' },
 ]
 
 export function getStatus(key: Status) { return STATUSES.find(s => s.key === key) ?? STATUSES[0] }

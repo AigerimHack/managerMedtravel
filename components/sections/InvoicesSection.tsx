@@ -30,8 +30,8 @@ export function InvoicesSection() {
     })
     return Array.from(map.entries())
       .sort(([a], [b]) => {
-        if (a === '__none') return 1
-        if (b === '__none') return -1
+        if (a === '__none') return -1
+        if (b === '__none') return 1
         return b.localeCompare(a)
       })
       .map(([key, items]) => {

@@ -1,5 +1,5 @@
 'use client'
-import { useEffect, ReactNode } from 'react'
+import { ReactNode } from 'react'
 import { X } from 'lucide-react'
 
 interface Props {
@@ -12,17 +12,10 @@ interface Props {
 }
 
 export function Modal({ open, onClose, title, children, footer, wide }: Props) {
-  useEffect(() => {
-    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', h)
-    return () => document.removeEventListener('keydown', h)
-  }, [onClose])
-
   if (!open) return null
 
   return (
     <div
-      onClick={e => { if (e.target === e.currentTarget) onClose() }}
       style={{ position: 'fixed', inset: 0, zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, background: 'rgba(15,25,35,0.5)', backdropFilter: 'blur(2px)' }}
     >
       <div style={{ background: '#fff', borderRadius: 20, width: '100%', maxWidth: wide ? 680 : 500, maxHeight: '88vh', display: 'flex', flexDirection: 'column', boxShadow: '0 24px 64px rgba(0,0,0,0.18)' }}>

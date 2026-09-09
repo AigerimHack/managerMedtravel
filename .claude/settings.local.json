@@ -59,7 +59,8 @@
       "Bash(cat .eslintrc.js)",
       "Bash(cat eslint.config.js)",
       "Bash(cat eslint.config.mjs)",
-      "Bash(kill 75306)"
+      "Bash(kill 75306)",
+      "Bash(open *)"
     ]
   }
 }
