@@ -41,9 +41,9 @@ export function TasksSection() {
 
       {/* Add task */}
       <Card style={{ marginBottom: 20, padding: 16 }}>
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-end', flexWrap: 'wrap' }}>
           <Input label="" value={newText} onChange={setNewText} placeholder="Новая задача..."
-            wrapStyle={{ flex: 1 }}
+            wrapStyle={{ flex: 1, minWidth: 180 }}
             style={{ borderColor: '#e2e8f0' }} />
           <Input label="" type="date" value={newDue} onChange={setNewDue}
             wrapStyle={{ width: 160 }} />

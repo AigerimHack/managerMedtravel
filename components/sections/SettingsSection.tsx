@@ -105,7 +105,7 @@ export function SettingsSection() {
       {/* Profile */}
       <Card>
         <SectionLabel>Профиль</SectionLabel>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <Input label="Имя" value={user?.name ?? ''} onChange={() => {}} />
           <Input label="Роль" value={user?.role === 'ADMIN' ? 'Администратор' : 'Менеджер'} onChange={() => {}} />
         </div>

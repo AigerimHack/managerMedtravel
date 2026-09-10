@@ -76,7 +76,6 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
   }
 
   const inputStyle = { marginBottom: 16 }
-  const row2: React.CSSProperties = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }
 
   return (
     <Modal open={open} onClose={onClose} wide
@@ -92,7 +91,7 @@ export function PatientModal({ open, onClose, editId, defaultStatus = 'new' }: P
       <Input label="Регистрационный номер" value={regNum} onChange={setRegNum} placeholder="REG-2024-001" wrapStyle={inputStyle} />
       <Input label="Диагноз / Цель визита" required value={diag} onChange={setDiag} placeholder="Рак молочной железы, Чек-ап, Консультация..." wrapStyle={inputStyle} />
 
-      <div style={row2}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
         <Select label="Клиника" value={clinic} onChange={setClinic}>
           <option value="">—</option>
           {clinics.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}

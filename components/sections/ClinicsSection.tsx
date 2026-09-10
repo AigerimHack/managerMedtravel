@@ -60,14 +60,14 @@ export function ClinicsSection() {
       />
 
       {/* Tab bar */}
-      <div style={{ display: 'flex', gap: 6, marginBottom: 24, borderBottom: '1.5px solid #f1f5f9', paddingBottom: 0 }}>
+      <div style={{ display: 'flex', gap: 6, marginBottom: 24, borderBottom: '1.5px solid #f1f5f9', paddingBottom: 0, overflowX: 'auto' }}>
         {TABS.map(t => (
           <button key={t.key} onClick={() => setTab(t.key)} style={{
             padding: '8px 18px', fontSize: 13.5, fontWeight: tab === t.key ? 600 : 400,
             color: tab === t.key ? '#0f1923' : '#94a3b8',
             background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit',
             borderBottom: tab === t.key ? '2px solid #2dd4bf' : '2px solid transparent',
-            marginBottom: -1.5, transition: 'color 0.15s',
+            marginBottom: -1.5, transition: 'color 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
           }}>
             {t.label}
           </button>
@@ -82,7 +82,7 @@ export function ClinicsSection() {
               Нет клиник. Добавьте первую →
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
             {clinics.map(c => (
               <Card key={c.id} hoverable padding={18} onClick={() => openClinic(c.id)}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
@@ -131,7 +131,7 @@ export function ClinicsSection() {
               Нет записей. Добавьте первую →
             </div>
           )}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {tabContacts.map(c => (
               <Card key={c.id} hoverable padding={20}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 14 }}>

@@ -36,7 +36,7 @@ export function PricesSection() {
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 16 }}>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {priceCards.map(card => (
           <Card key={card.id} padding={0}>
             {/* Card header */}

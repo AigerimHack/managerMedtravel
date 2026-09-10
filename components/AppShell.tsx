@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Plus, LogOut } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Plus, LogOut, Menu, X } from 'lucide-react'
 import { SessionProvider, useSession, signOut } from 'next-auth/react'
 import { ToastProvider } from '@/components/ui/Toast'
 import { Sidebar } from '@/components/ui/Sidebar'
@@ -12,24 +13,42 @@ const SIDEBAR_W = 220
 
 function ShellInner({ children }: { children: React.ReactNode }) {
   const [addOpen, setAddOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const { initialize, initialized } = useStore()
   const { data: session } = useSession()
+  const pathname = usePathname()
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => { initialize() }, [])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setMenuOpen(false) }, [pathname])
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', background: '#f4f6f9' }}>
-      <Sidebar user={session?.user ?? undefined} />
+      <Sidebar user={session?.user ?? undefined} open={menuOpen} onNavigate={() => setMenuOpen(false)} onClose={() => setMenuOpen(false)} />
       <PatientModal open={addOpen} onClose={() => setAddOpen(false)} />
 
-      <div style={{ marginLeft: SIDEBAR_W, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: 0 }}>
-        <div style={{
+      <div className="app-content" style={{ marginLeft: SIDEBAR_W, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh', minWidth: 0 }}>
+        <div className="app-header" style={{
           position: 'sticky', top: 0, zIndex: 30, background: '#fff',
-          borderBottom: '1px solid #f1f5f9', padding: '0 28px', height: 60,
-          display: 'flex', alignItems: 'center', gap: 16,
+          borderBottom: '1px solid #f1f5f9', padding: '0 28px', minHeight: 60,
+          display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', rowGap: 8,
         }}>
-          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            className="mobile-menu-btn"
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label="Меню"
+            style={{
+              width: 36, height: 36, alignItems: 'center', justifyContent: 'center',
+              background: 'none', border: '1.5px solid #e2e8f0', borderRadius: 10,
+              cursor: 'pointer', color: '#1a2332', flexShrink: 0,
+            }}
+          >
+            {menuOpen ? <X size={17} /> : <Menu size={17} />}
+          </button>
+
+          <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
             <VisitNotifications />
             <button
               onClick={() => setAddOpen(true)}
@@ -61,7 +80,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
             animation: 'progress 1.5s ease-in-out infinite' }} />
         )}
 
-        <main style={{ flex: 1, padding: 28 }}>
+        <main className="app-main" style={{ flex: 1, padding: 28 }}>
           {children}
         </main>
       </div>

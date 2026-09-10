@@ -60,7 +60,16 @@
       "Bash(cat eslint.config.js)",
       "Bash(cat eslint.config.mjs)",
       "Bash(kill 75306)",
-      "Bash(open *)"
+      "Bash(open *)",
+      "Bash(sqlite3 prisma/dev.db \"SELECT id, email, name, role, length\\(password\\) FROM User;\")",
+      "Bash(curl -s -m 10 -D - \"http://192.168.2.139:3001/api/auth/csrf\" -o /tmp/csrf2.json)",
+      "Read(//tmp/**)",
+      "Bash(cp /tmp/mktest.ts ./mktest.ts)",
+      "Bash(DATABASE_URL=\"file:./dev.db\" npx tsx mktest.ts)",
+      "Bash(rm -f mktest.ts)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/calendar)",
+      "Bash(git add *)"
     ]
   }
 }

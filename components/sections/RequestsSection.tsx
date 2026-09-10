@@ -28,11 +28,11 @@ export function RequestsSection() {
         action={<Button variant="primary" icon={<Plus size={14} />} onClick={() => { setEditId(null); setModalOpen(true) }}>Добавить запрос</Button>}
       />
 
-      <Card padding={0}>
+      <Card padding={0} style={{ overflowX: 'auto' }}>
         {list.length === 0 ? (
           <div style={S.empty}>Нет запросов. Добавьте первого пациента →</div>
         ) : (
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 720 }}>
             <thead>
               <tr>
                 <th style={S.th}>ФИО</th>

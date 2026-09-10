@@ -65,7 +65,7 @@ export function PatientsSection() {
                   <div style={{ borderTop: '1px solid #f8fafc', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
                     {/* Месяцы — 3 в строку */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                       {Object.keys(byYear[yr]).map(Number).sort((a, b) => a - b).map(mo => {
                         const mk = `${yr}-${mo}`
                         const monthOpen = openMonths.has(mk)
@@ -97,7 +97,7 @@ export function PatientsSection() {
                           <div style={{ fontSize: 12, fontWeight: 600, color: '#0f766e', marginBottom: 10, padding: '0 2px' }}>
                             {MONTHS[mo]} — {mPatients.length} пациентов
                           </div>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {mPatients.map(p => {
                               const col = avatarColor(p.name)
                               const ini = initials(p.name)

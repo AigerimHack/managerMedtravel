@@ -39,7 +39,7 @@ export function Card({ children, style, padding = 20, onClick, hoverable }: Prop
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: ReactNode }) {
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 24 }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', rowGap: 12, marginBottom: 24 }}>
       <div>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: '#0f1923', letterSpacing: -0.3 }}>{title}</h1>
         {subtitle && <p style={{ fontSize: 13, color: '#94a3b8', marginTop: 4 }}>{subtitle}</p>}

@@ -81,7 +81,7 @@ export function ClinicModal({ open, onClose, editId }: Props) {
         </>
       }>
       <Input label="Название" required value={form.name} onChange={set('name')} placeholder="Asan Medical Center" wrapStyle={ws} />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 14 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3.5">
         <Input label="Страна / Город" value={form.city ?? ''} onChange={set('city')} placeholder="Сеул, Корея" />
         <Input label="Специализация" value={form.spec ?? ''} onChange={set('spec')} placeholder="Онкология..." />
       </div>

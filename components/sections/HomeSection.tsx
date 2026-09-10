@@ -85,12 +85,65 @@ export function HomeSection() {
   const greens = patients.filter(p => p.status === 'enrolled').length
   const reqs = patients.filter(p => p.status !== 'enrolled' && p.status !== 'done').length
 
+  const miniCalendar = (
+    <Card padding={16}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={{ fontSize: 13.5, fontWeight: 600 }}>{MONTHS[mon]} {year}</span>
+        <div style={{ display: 'flex', gap: 4 }}>
+          <button onClick={() => setCalDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n })}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, borderRadius: 6, display: 'flex' }}>
+            <ChevronLeft size={14} />
+          </button>
+          <button onClick={() => setCalDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n })}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, borderRadius: 6, display: 'flex' }}>
+            <ChevronRight size={14} />
+          </button>
+        </div>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
+        {(['Пн','Вт','Ср','Чт','Пт','Сб','Вс'] as const).map((d, i) => (
+          <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 500, padding: '4px 0',
+            color: i === 5 ? '#93c5fd' : i === 6 ? '#fca5a5' : '#94a3b8' }}>{d}</div>
+        ))}
+        {Array.from({ length: dow - 1 }).map((_, i) => <div key={`e${i}`} />)}
+        {Array.from({ length: days }).map((_, i) => {
+          const d = i + 1
+          const ds = `${year}-${pad(mon + 1)}-${pad(d)}`
+          const isT = ds === todayStr
+          const isSel = ds === selectedDate
+          const hasEv = eventDays.has(d)
+          const holiday = getKoreanHoliday(ds)
+          const col = (dow - 1 + i) % 7 // 0=Mon … 5=Sat 6=Sun
+          const isSat = col === 5, isSun = col === 6
+          return (
+            <button key={d} onClick={() => selectDay(d)} title={holiday ?? undefined} style={{
+              position: 'relative', textAlign: 'center', fontSize: 12, padding: '6px 2px',
+              borderRadius: 6, border: 'none', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit',
+              background: isT ? '#2dd4bf' : isSel ? '#eff6ff' : 'none',
+              color: isT ? '#0f1923' : isSel ? '#1e40af'
+                : (holiday || isSun) ? '#ef4444' : isSat ? '#93c5fd' : '#374151',
+            }}>
+              {d}
+              {(hasEv || holiday) && !isT && (
+                <span style={{
+                  position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
+                  width: 4, height: 4, borderRadius: '50%', display: 'block',
+                  background: hasEv ? '#2dd4bf' : '#ef4444',
+                }} />
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </Card>
+  )
+
   return (
     <div>
       <PatientModal open={modalOpen} onClose={() => { setModalOpen(false); setEditId(null) }} editId={editId} />
 
       {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 24 }}>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4" style={{ marginBottom: 24 }}>
         {[
           { num: greens, label: '🟢 Зелёные (записаны)', color: '#10b981' },
           { num: reqs,   label: '🟡 Запросы (в работе)', color: '#f59e0b' },
@@ -103,8 +156,13 @@ export function HomeSection() {
         ))}
       </div>
 
+      {/* Mini calendar — shown here only on mobile, right under the stats */}
+      <div className="mobile-only" style={{ marginBottom: 20 }}>
+        {miniCalendar}
+      </div>
+
       {/* Main grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 24, alignItems: 'start' }}>
+      <div className="home-main-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 280px', gap: 24, alignItems: 'start' }}>
 
         {/* LEFT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
@@ -159,26 +217,46 @@ export function HomeSection() {
               {recentRequests.length === 0 ? (
                 <div style={{ padding: '32px 0', textAlign: 'center', color: '#cbd5e1', fontSize: 13.5 }}>Нет новых запросов за неделю</div>
               ) : (
-                <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                  <thead>
-                    <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
-                      {['ФИО', 'Диагноз', 'Статус', 'Обновлено'].map(h => (
-                        <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentRequests.map(p => (
-                      <tr key={p.id} onClick={() => { setEditId(p.id); setModalOpen(true) }}
-                        style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer' }}>
-                        <td style={{ padding: '12px 16px', fontSize: 13.5, fontWeight: 500 }}>{p.name}</td>
-                        <td style={{ padding: '12px 16px', fontSize: 13.5, color: '#64748b' }}>{p.diag || '—'}</td>
-                        <td style={{ padding: '12px 16px' }}><StatusBadge status={p.status} /></td>
-                        <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>{fmtDateTime(p.updated || p.created)}</td>
+                <>
+                  {/* Desktop: table */}
+                  <table className="desktop-only" style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid #f1f5f9', background: '#f8fafc' }}>
+                        {['ФИО', 'Диагноз', 'Статус', 'Обновлено'].map(h => (
+                          <th key={h} style={{ padding: '10px 16px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 0.5 }}>{h}</th>
+                        ))}
                       </tr>
+                    </thead>
+                    <tbody>
+                      {recentRequests.map(p => (
+                        <tr key={p.id} onClick={() => { setEditId(p.id); setModalOpen(true) }}
+                          style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer' }}>
+                          <td style={{ padding: '12px 16px', fontSize: 13.5, fontWeight: 500 }}>{p.name}</td>
+                          <td style={{ padding: '12px 16px', fontSize: 13.5, color: '#64748b' }}>{p.diag || '—'}</td>
+                          <td style={{ padding: '12px 16px' }}><StatusBadge status={p.status} /></td>
+                          <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>{fmtDateTime(p.updated || p.created)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+
+                  {/* Mobile: stacked list, no horizontal scroll */}
+                  <div className="mobile-only">
+                    {recentRequests.map((p, i) => (
+                      <div key={p.id} onClick={() => { setEditId(p.id); setModalOpen(true) }}
+                        style={{ padding: '12px 16px', borderBottom: i < recentRequests.length - 1 ? '1px solid #f8fafc' : 'none', cursor: 'pointer' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, marginBottom: 4 }}>
+                          <span style={{ fontSize: 13.5, fontWeight: 500 }}>{p.name}</span>
+                          <StatusBadge status={p.status} />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+                          <span style={{ fontSize: 12, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.diag || '—'}</span>
+                          <span style={{ fontSize: 11, color: '#94a3b8', flexShrink: 0 }}>{fmtDateTime(p.updated || p.created)}</span>
+                        </div>
+                      </div>
                     ))}
-                  </tbody>
-                </table>
+                  </div>
+                </>
               )}
             </Card>
           </div>
@@ -187,57 +265,8 @@ export function HomeSection() {
         {/* RIGHT COLUMN */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Mini calendar */}
-          <Card padding={16}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-              <span style={{ fontSize: 13.5, fontWeight: 600 }}>{MONTHS[mon]} {year}</span>
-              <div style={{ display: 'flex', gap: 4 }}>
-                <button onClick={() => setCalDate(d => { const n = new Date(d); n.setMonth(n.getMonth() - 1); return n })}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, borderRadius: 6, display: 'flex' }}>
-                  <ChevronLeft size={14} />
-                </button>
-                <button onClick={() => setCalDate(d => { const n = new Date(d); n.setMonth(n.getMonth() + 1); return n })}
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#94a3b8', padding: 4, borderRadius: 6, display: 'flex' }}>
-                  <ChevronRight size={14} />
-                </button>
-              </div>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 2 }}>
-              {(['Пн','Вт','Ср','Чт','Пт','Сб','Вс'] as const).map((d, i) => (
-                <div key={d} style={{ textAlign: 'center', fontSize: 10, fontWeight: 500, padding: '4px 0',
-                  color: i === 5 ? '#93c5fd' : i === 6 ? '#fca5a5' : '#94a3b8' }}>{d}</div>
-              ))}
-              {Array.from({ length: dow - 1 }).map((_, i) => <div key={`e${i}`} />)}
-              {Array.from({ length: days }).map((_, i) => {
-                const d = i + 1
-                const ds = `${year}-${pad(mon + 1)}-${pad(d)}`
-                const isT = ds === todayStr
-                const isSel = ds === selectedDate
-                const hasEv = eventDays.has(d)
-                const holiday = getKoreanHoliday(ds)
-                const col = (dow - 1 + i) % 7 // 0=Mon … 5=Sat 6=Sun
-                const isSat = col === 5, isSun = col === 6
-                return (
-                  <button key={d} onClick={() => selectDay(d)} title={holiday ?? undefined} style={{
-                    position: 'relative', textAlign: 'center', fontSize: 12, padding: '6px 2px',
-                    borderRadius: 6, border: 'none', cursor: 'pointer', fontWeight: 500, fontFamily: 'inherit',
-                    background: isT ? '#2dd4bf' : isSel ? '#eff6ff' : 'none',
-                    color: isT ? '#0f1923' : isSel ? '#1e40af'
-                      : (holiday || isSun) ? '#ef4444' : isSat ? '#93c5fd' : '#374151',
-                  }}>
-                    {d}
-                    {(hasEv || holiday) && !isT && (
-                      <span style={{
-                        position: 'absolute', bottom: 2, left: '50%', transform: 'translateX(-50%)',
-                        width: 4, height: 4, borderRadius: '50%', display: 'block',
-                        background: hasEv ? '#2dd4bf' : '#ef4444',
-                      }} />
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          </Card>
+          {/* Mini calendar — hidden here on mobile, shown right after stats instead */}
+          <div className="desktop-only">{miniCalendar}</div>
 
           {/* Tasks */}
           <Card padding={16}>

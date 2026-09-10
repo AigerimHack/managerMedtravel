@@ -71,7 +71,7 @@ export function VisitNotifications() {
       </button>
 
       {open && (
-        <div style={{
+        <div className="notif-dropdown" style={{
           position: 'absolute', top: 44, right: 0,
           width: 320, background: '#fff',
           border: '1px solid #f1f5f9', borderRadius: 14,
